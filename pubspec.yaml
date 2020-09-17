@@ -48,9 +48,9 @@ flutter:
     - assets/img/
 
   fonts:
-    - family: OpenSans
+    - family: Questrial
       fonts:
-        - asset: assets/fonts/OpenSans/OpenSans-Regular.ttf
+        - asset: fonts/Questrial-Regular.ttf
 
 
   # The following line ensures that the Material Icons font is
