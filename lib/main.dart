@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'components.dart';
 
 void main() => runApp(
     MaterialApp(theme: ThemeData(fontFamily: 'Questrial'), home: Home()));
@@ -7,23 +8,19 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFFFAFAFA),
-        title: Image.asset('assets/img/Syno-AppBar.png',
-            height: 150, fit: BoxFit.fitHeight),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text('Greetings Earth!',
-            style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.grey[600],
-                fontFamily: 'Questrial')),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Text('Click'),
-      ),
-    );
+        drawer: Container(width: 250.0, child: drawer),
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: grey),
+          backgroundColor: white,
+          title: Image.asset('assets/img/Syno-AppBar.png',
+              height: 150, fit: BoxFit.fitHeight),
+          centerTitle: true,
+        ),
+        body: Container(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 80.0),
+            child: Center(child: mainButton)));
   }
 }
+
+var white = Color(0xFFFAFAFA);
+var grey = Color(0xFF555555);

@@ -1,5 +1,5 @@
-name: syno
-description: A new Flutter project.
+name: Syno
+description: Speech transcriber implementing 'Google Speech-To-Text API' built with Flutter, Dart and Firebase.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -51,6 +51,8 @@ flutter:
     - family: Questrial
       fonts:
         - asset: fonts/Questrial-Regular.ttf
+
+  uses-material-design: true
 
 
   # The following line ensures that the Material Icons font is
