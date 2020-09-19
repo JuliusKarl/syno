@@ -14,7 +14,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: Container(width: 250.0, child: drawer),
+        drawer: Container(width: 250.0, child: RecentWords()),
         appBar: AppBar(
           iconTheme: IconThemeData(color: grey),
           backgroundColor: white,
@@ -27,25 +27,3 @@ class _HomeState extends State<Home> {
             child: Center(child: MainButton("Pressed!"))));
   }
 }
-
-var drawer = Drawer(
-  child: ListView(
-    padding: EdgeInsets.zero,
-    children: <Widget>[
-      Container(
-          height: 100.0,
-          child: DrawerHeader(
-            child:
-                Text('Recent', style: TextStyle(fontSize: 30.0, color: grey)),
-          )),
-      ListTile(
-        title: Text('Item 1'),
-        onTap: () {},
-      ),
-      ListTile(
-        title: Text('Item 2'),
-        onTap: () {},
-      ),
-    ],
-  ),
-);
