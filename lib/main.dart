@@ -24,6 +24,6 @@ class _HomeState extends State<Home> {
         ),
         body: Container(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 80.0),
-            child: Center(child: MainButton("Pressed!"))));
+            child: Center(child: MainButton(message: "hi"))));
   }
 }

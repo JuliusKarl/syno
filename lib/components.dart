@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+
+// Global Variables
+var recentWords = [];
 
 // Widgets
 class MainButton extends StatefulWidget {
-  String message;
-  int count = 0;
+  final String message;
+  MainButton({this.message});
 
-  MainButton(message) {
-    this.message = message;
-  }
   @override
   _MainButtonState createState() => _MainButtonState();
 }
 
 class _MainButtonState extends State<MainButton> {
+  String message;
+  stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _text;
+
+  @override
+  initState() {
+    super.initState();
+    message = widget.message;
+    _speech = stt.SpeechToText();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,23 +36,52 @@ class _MainButtonState extends State<MainButton> {
           shape: new CircleBorder(),
           elevation: 2.0,
           child: Image.asset('assets/img/Syno-Button.png'),
-          onPressed: () {
-            print(widget.count);
-            setState(() {
-              widget.count += 1;
-            });
-          },
+          onPressed: _listen,
         ));
+  }
+
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+          onStatus: (val) => {
+                if (val == 'listening')
+                  {print("Listening ...")}
+                else if (val == 'notListening')
+                  {
+                    print("Stopped Listening"),
+                    print(_text),
+                    if (_text != '') recentWords.add(_text),
+                    _speech.stop(),
+                    setState(() => _isListening = false)
+                  }
+              },
+          onError: (val) => _speech.stop());
+
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+            onResult: (val) => setState(() {
+                  _text = val.recognizedWords;
+                }));
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
   }
 }
 
 class RecentWords extends StatefulWidget {
-  List<String> recentWords = ['Apple', 'Whoa', 'Lamp'];
   @override
   _RecentWordsState createState() => _RecentWordsState();
 }
 
 class _RecentWordsState extends State<RecentWords> {
+  @override
+  initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,7 +96,7 @@ class _RecentWordsState extends State<RecentWords> {
                     style: TextStyle(fontSize: 30.0, color: grey)),
               )),
           Column(
-              children: widget.recentWords.map((word) {
+              children: recentWords.map((word) {
             return ListTile(title: Text(word), onTap: () {});
           }).toList())
         ],
