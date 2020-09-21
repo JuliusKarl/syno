@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 // Global Variables
-var recentWords = [];
+List recentWords = [];
 
 // Widgets
 class MainButton extends StatefulWidget {
@@ -14,7 +15,6 @@ class MainButton extends StatefulWidget {
 }
 
 class _MainButtonState extends State<MainButton> {
-  String message;
   stt.SpeechToText _speech;
   bool _isListening = false;
   String _text;
@@ -22,22 +22,42 @@ class _MainButtonState extends State<MainButton> {
   @override
   initState() {
     super.initState();
-    message = widget.message;
     _speech = stt.SpeechToText();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: 200.0,
-        height: 200.0,
-        child: new RawMaterialButton(
-          fillColor: white,
-          shape: new CircleBorder(),
-          elevation: 2.0,
-          child: Image.asset('assets/img/Syno-Button.png'),
-          onPressed: _listen,
-        ));
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Container(
+          width: 250.0,
+          height: 250.0,
+          child: AvatarGlow(
+              animate: _isListening,
+              glowColor: orange,
+              endRadius: 250,
+              duration: Duration(milliseconds: 1500),
+              showTwoGlows: true,
+              child: Container(
+                  height: 180,
+                  width: 180,
+                  child: RawMaterialButton(
+                      fillColor: white,
+                      shape: CircleBorder(),
+                      elevation: 2.0,
+                      child: Container(
+                          foregroundDecoration: _isListening
+                              ? BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey,
+                                  backgroundBlendMode: BlendMode.saturation,
+                                )
+                              : null,
+                          child: Image.asset('assets/img/Syno-Button.png')),
+                      onPressed: _listen)))),
+      new Text(
+        _isListening ? "" : (_text != null ? _text : "Tap to start"),
+      )
+    ]);
   }
 
   void _listen() async {
@@ -45,17 +65,16 @@ class _MainButtonState extends State<MainButton> {
       bool available = await _speech.initialize(
           onStatus: (val) => {
                 if (val == 'listening')
-                  {print("Listening ...")}
+                  {_text = '', print("Listening ...")}
                 else if (val == 'notListening')
                   {
-                    print("Stopped Listening"),
-                    print(_text),
-                    if (_text != '') recentWords.add(_text),
+                    print("Stopped listening: $_text"),
+                    if (_text.length > 0) recentWords.add(_text),
                     _speech.stop(),
                     setState(() => _isListening = false)
                   }
               },
-          onError: (val) => _speech.stop());
+          onError: (val) => {_speech.stop(), _isListening = false});
 
       if (available) {
         setState(() => _isListening = true);
@@ -86,8 +105,7 @@ class _RecentWordsState extends State<RecentWords> {
   Widget build(BuildContext context) {
     return Container(
         child: Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: Column(
         children: <Widget>[
           Container(
               height: 100.0,
@@ -95,10 +113,16 @@ class _RecentWordsState extends State<RecentWords> {
                 child: Text('Recent',
                     style: TextStyle(fontSize: 30.0, color: grey)),
               )),
-          Column(
-              children: recentWords.map((word) {
-            return ListTile(title: Text(word), onTap: () {});
-          }).toList())
+          Expanded(
+              child: ListView(
+                  children: recentWords
+                      .map((word) {
+                        return Card(
+                            child: ListTile(title: Text(word), onTap: () {}));
+                      })
+                      .toList()
+                      .reversed
+                      .toList()))
         ],
       ),
     ));
@@ -108,3 +132,4 @@ class _RecentWordsState extends State<RecentWords> {
 //  Styling
 var white = Color(0xFFFAFAFA);
 var grey = Color(0xFF555555);
+var orange = Color(0xFFe39768);

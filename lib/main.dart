@@ -10,7 +10,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int test = 1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,6 +23,6 @@ class _HomeState extends State<Home> {
         ),
         body: Container(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 80.0),
-            child: Center(child: MainButton(message: "hi"))));
+            child: Center(child: MainButton())));
   }
 }
