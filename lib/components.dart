@@ -82,6 +82,10 @@ class _MainButtonState extends State<MainButton> {
                     print("Stopped listening: $_text"),
                     if (_text.length != null && _text != '' && _text.length > 0)
                       {
+                        if (recentWords.contains(_text))
+                          {
+                            recentWords.removeWhere((word) => word == _text),
+                          },
                         recentWords.add(_text),
                         Navigator.push(
                             context,
@@ -140,7 +144,7 @@ class _RecentWordsState extends State<RecentWords> {
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
                         trailing: Icon(Icons.arrow_forward_ios, size: 15),
-                        title: Text(recentWords[index]),
+                        title: Text(recentWords.reversed.toList()[index]),
                         onTap: () {
                           Navigator.push(
                               context,
