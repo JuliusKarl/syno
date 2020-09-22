@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -15,6 +16,7 @@ class MainButton extends StatefulWidget {
 }
 
 class _MainButtonState extends State<MainButton> {
+  Image button;
   stt.SpeechToText _speech;
   bool _isListening = false;
   String _text;
@@ -22,19 +24,26 @@ class _MainButtonState extends State<MainButton> {
   @override
   initState() {
     super.initState();
+    button = Image.asset('assets/img/Syno-Button.png');
     _speech = stt.SpeechToText();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(button.image, context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Container(
-          width: 250.0,
-          height: 250.0,
+          width: 230.0,
+          height: 230.0,
           child: AvatarGlow(
               animate: _isListening,
               glowColor: orange,
-              endRadius: 250,
+              endRadius: 200,
               duration: Duration(milliseconds: 1500),
               showTwoGlows: true,
               child: Container(
@@ -48,15 +57,17 @@ class _MainButtonState extends State<MainButton> {
                           foregroundDecoration: _isListening
                               ? BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.grey,
-                                  backgroundBlendMode: BlendMode.saturation,
+                                  color: Colors.grey[400],
+                                  backgroundBlendMode: BlendMode.hardLight,
                                 )
                               : null,
-                          child: Image.asset('assets/img/Syno-Button.png')),
+                          child: button),
                       onPressed: _listen)))),
-      new Text(
-        _isListening ? "" : (_text != null ? _text : "Tap to start"),
-      )
+      Container(
+          margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+          child: Text(
+            _isListening ? "Listening ..." : "Tap to start",
+          ))
     ]);
   }
 
@@ -69,7 +80,14 @@ class _MainButtonState extends State<MainButton> {
                 else if (val == 'notListening')
                   {
                     print("Stopped listening: $_text"),
-                    if (_text.length > 0) recentWords.add(_text),
+                    if (_text.length != null && _text != '' && _text.length > 0)
+                      {
+                        recentWords.add(_text),
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SecondPage(word: _text)))
+                      },
                     _speech.stop(),
                     setState(() => _isListening = false)
                   }
@@ -115,14 +133,32 @@ class _RecentWordsState extends State<RecentWords> {
               )),
           Expanded(
               child: ListView(
-                  children: recentWords
-                      .map((word) {
-                        return Card(
-                            child: ListTile(title: Text(word), onTap: () {}));
-                      })
-                      .toList()
-                      .reversed
-                      .toList()))
+                  children: recentWords.length > 0
+                      ? recentWords
+                          .map((word) {
+                            return Card(
+                                child: ListTile(
+                                    title: Text(word),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SecondPage(word: word)));
+                                    }));
+                          })
+                          .toList()
+                          .reversed
+                          .toList()
+                      : [
+                          Center(
+                              child: Text(
+                            "No recent words",
+                            style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                color: Colors.grey[400]),
+                          ))
+                        ]))
         ],
       ),
     ));
