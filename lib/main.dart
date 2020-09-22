@@ -17,6 +17,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    getRecentWords();
     logo = Image.asset('assets/img/Syno-AppBar.png',
         height: 150, fit: BoxFit.fitHeight);
   }
@@ -112,12 +113,13 @@ class _SecondPageState extends State<SecondPage> {
                                       style: TextStyle(fontSize: 25))
                                 ]));
                       } else {
-                        return Text(
+                        return Center(
+                            child: Text(
                           "No definition",
                           style: TextStyle(
                               fontStyle: FontStyle.italic,
                               color: Colors.grey[400]),
-                        );
+                        ));
                       }
                     } else if (snapshot.hasError) {
                       return Text("${snapshot.error}");
@@ -131,31 +133,37 @@ class _SecondPageState extends State<SecondPage> {
               if (snapshot.hasData) {
                 if (snapshot.data.synonym != null) {
                   if (snapshot.data.synonym.length == 0) {
-                    return Center(
-                        child: Container(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
-                            child: Text(
-                              "No synonyms",
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  color: Colors.grey[400]),
-                            )));
+                    return Container(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
+                        child: Text(
+                          "No synonyms",
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: Colors.grey[400]),
+                        ));
                   } else {
-                    return ListView.builder(
+                    return ListView.separated(
                         itemCount: snapshot.data.synonym.length,
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Divider(
+                            height: 10,
+                            indent: 15,
+                            endIndent: 15,
+                          );
+                        },
                         itemBuilder: (BuildContext ctxt, int index) {
-                          return Card(
-                              child: ListTile(
-                                  title: Text(snapshot.data.synonym[index]),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SecondPage(
-                                                word: snapshot
-                                                    .data.synonym[index]
-                                                    .toString())));
-                                  }));
+                          return ListTile(
+                              trailing: Icon(Icons.arrow_forward_ios,
+                                  size: 10, color: grey),
+                              title: Text(snapshot.data.synonym[index]),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SecondPage(
+                                            word: snapshot.data.synonym[index]
+                                                .toString())));
+                              });
                         });
                   }
                 } else {
@@ -186,7 +194,8 @@ class _SecondPageState extends State<SecondPage> {
 
 // HTTP Fetch Synonym
 Future<Synonyms> fetchSynonym(word) async {
-  final worduri = word.replaceAll(new RegExp(r'[^\w\s]+'), '');
+  final worduri = word.replaceAll(new RegExp(r'(?!\-)[^\w\s]+'), '');
+  print(worduri);
   final response = await http.get(
       'https://wordsapiv1.p.rapidapi.com/words/$worduri/synonyms',
       headers: {
@@ -198,7 +207,7 @@ Future<Synonyms> fetchSynonym(word) async {
 
 // HTTP Fetch Definition
 Future<Definition> fetchDefinition(word) async {
-  final worduri = word.replaceAll(new RegExp(r'[^\w\s]+'), '');
+  final worduri = word.replaceAll(new RegExp(r'(?!\-)[^\w\s]+'), '');
   final response = await http.get(
       'https://wordsapiv1.p.rapidapi.com/words/$worduri/definitions',
       headers: {

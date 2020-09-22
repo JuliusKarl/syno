@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 // Global Variables
 List recentWords = [];
+final LocalStorage storage = new LocalStorage('keys');
 
 // Widgets
 class MainButton extends StatefulWidget {
@@ -87,6 +89,7 @@ class _MainButtonState extends State<MainButton> {
                             recentWords.removeWhere((word) => word == _text),
                           },
                         recentWords.add(_text),
+                        storeRecentWords(),
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -112,6 +115,22 @@ class _MainButtonState extends State<MainButton> {
   }
 }
 
+getRecentWords() async {
+  await storage.ready;
+  if (storage.getItem('recentWords') != null) {
+    recentWords = storage.getItem('recentWords');
+  }
+}
+
+storeRecentWords() {
+  storage.setItem('recentWords', recentWords);
+}
+
+clearRecentWords() async {
+  await storage.clear();
+  recentWords = [];
+}
+
 class RecentWords extends StatefulWidget {
   @override
   _RecentWordsState createState() => _RecentWordsState();
@@ -130,27 +149,53 @@ class _RecentWordsState extends State<RecentWords> {
       child: Column(
         children: <Widget>[
           Container(
-              height: 100.0,
-              child: DrawerHeader(
-                child: Text('Recent',
-                    style: TextStyle(fontSize: 30.0, color: grey)),
-              )),
+              margin: EdgeInsets.fromLTRB(10, 30, 10, 0),
+              padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Text('Recent',
+                          style: TextStyle(fontSize: 30.0, color: grey)),
+                    ),
+                    Container(
+                        child: IconButton(
+                      icon: Icon(Icons.refresh,
+                          size: 20,
+                          color: recentWords.length > 0
+                              ? grey
+                              : Color(0x00000000)),
+                      onPressed: () {
+                        clearRecentWords();
+                        setState(() {
+                          recentWords = [];
+                        });
+                      },
+                    ))
+                  ])),
           Expanded(
               child: ListView.separated(
                   itemCount: recentWords.length,
                   separatorBuilder: (BuildContext context, int index) {
-                    return Divider();
+                    return Divider(
+                      height: 10,
+                      indent: 15,
+                      endIndent: 15,
+                    );
                   },
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
-                        trailing: Icon(Icons.arrow_forward_ios, size: 15),
+                        trailing: Icon(Icons.arrow_forward_ios,
+                            size: 10, color: grey),
                         title: Text(recentWords.reversed.toList()[index]),
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      SecondPage(word: recentWords[index])));
+                                  builder: (context) => SecondPage(
+                                      word: recentWords.reversed
+                                          .toList()[index])));
                         });
                   }))
         ],
