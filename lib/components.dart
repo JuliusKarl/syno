@@ -132,33 +132,23 @@ class _RecentWordsState extends State<RecentWords> {
                     style: TextStyle(fontSize: 30.0, color: grey)),
               )),
           Expanded(
-              child: ListView(
-                  children: recentWords.length > 0
-                      ? recentWords
-                          .map((word) {
-                            return Card(
-                                child: ListTile(
-                                    title: Text(word),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SecondPage(word: word)));
-                                    }));
-                          })
-                          .toList()
-                          .reversed
-                          .toList()
-                      : [
-                          Center(
-                              child: Text(
-                            "No recent words",
-                            style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.grey[400]),
-                          ))
-                        ]))
+              child: ListView.separated(
+                  itemCount: recentWords.length,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                        trailing: Icon(Icons.arrow_forward_ios, size: 15),
+                        title: Text(recentWords[index]),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SecondPage(word: recentWords[index])));
+                        });
+                  }))
         ],
       ),
     ));
