@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 // Global Variables
@@ -29,7 +26,7 @@ class _MainButtonState extends State<MainButton> {
   @override
   initState() {
     super.initState();
-    button = Image.asset('assets/img/Syno-Button.png');
+    button = Image.asset('assets/img/Syno-Button.png', gaplessPlayback: true);
     _speech = stt.SpeechToText();
   }
 
@@ -41,6 +38,7 @@ class _MainButtonState extends State<MainButton> {
 
   @override
   Widget build(BuildContext context) {
+    precacheImage(button.image, context);
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Container(
           width: 230.0,
@@ -174,7 +172,7 @@ class _RecentWordsState extends State<RecentWords> {
                     ),
                     Container(
                         child: IconButton(
-                      icon: Icon(Icons.refresh,
+                      icon: Icon(Icons.delete,
                           size: 20,
                           color: recentWords.length > 0
                               ? grey

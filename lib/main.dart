@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
       }
     });
     logo = Image.asset('assets/img/Syno-AppBar.png',
-        height: 150, fit: BoxFit.fitHeight);
+        height: 150, fit: BoxFit.fitHeight, gaplessPlayback: true);
   }
 
   @override
@@ -49,12 +49,13 @@ class _HomeState extends State<Home> {
 
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
     precacheImage(logo.image, context);
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    precacheImage(logo.image, context);
     return Scaffold(
         drawer: Container(width: 250.0, child: RecentWords()),
         appBar: AppBar(
@@ -129,6 +130,17 @@ class _SecondPageState extends State<SecondPage> {
     return Scaffold(
         appBar: AppBar(
             backgroundColor: white,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: grey,
+              ),
+              onPressed: () {
+                connectionStatus
+                    ? Navigator.of(context).pop()
+                    : DoNothingAction();
+              },
+            ),
             iconTheme: IconThemeData(color: grey),
             centerTitle: true,
             actions: <Widget>[
@@ -174,9 +186,7 @@ class _SecondPageState extends State<SecondPage> {
                               return Center(
                                   child: Text(
                                 "No definition",
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.grey[400]),
+                                style: TextStyle(color: Colors.grey[400]),
                               ));
                             }
                           } else if (snapshot.hasError) {
@@ -195,9 +205,7 @@ class _SecondPageState extends State<SecondPage> {
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
                               child: Text(
                                 "No synonyms",
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.grey[400]),
+                                style: TextStyle(color: Colors.grey[400]),
                               ));
                         } else {
                           return ListView.separated(
@@ -232,9 +240,7 @@ class _SecondPageState extends State<SecondPage> {
                                 padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
                                 child: Text(
                                   '"${widget.word}" not found',
-                                  style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.grey[400]),
+                                  style: TextStyle(color: Colors.grey[400]),
                                 )));
                       }
                     } else if (snapshot.hasError) {
@@ -266,13 +272,10 @@ Future<Synonyms> fetchSynonym(word) async {
           'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
           'x-rapidapi-key': 'cf27a39d17msh2f698d0bc5123d6p13a834jsnb4c356ae1541'
         });
-    if (response.statusCode == 200) {
-      return Synonyms.fromJson(json.decode(response.body));
-    }
+    return Synonyms.fromJson(json.decode(response.body));
   } on Exception {
     return null;
   }
-  return null;
 }
 
 // HTTP Fetch Definition
@@ -285,14 +288,14 @@ Future<Definition> fetchDefinition(word) async {
           'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
           'x-rapidapi-key': 'cf27a39d17msh2f698d0bc5123d6p13a834jsnb4c356ae1541'
         });
-
-    if (response.statusCode == 200) {
+    if (response.statusCode != 200) {
+      return null;
+    } else {
       return Definition.fromJson(json.decode(response.body));
     }
   } on Exception {
     return null;
   }
-  return null;
 }
 
 class Synonyms {
