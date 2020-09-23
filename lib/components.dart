@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 // Global Variables

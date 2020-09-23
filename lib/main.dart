@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -86,12 +85,34 @@ class SecondPage extends StatefulWidget {
 class _SecondPageState extends State<SecondPage> {
   Future<Synonyms> futureSynonym;
   Future<Definition> futureDefinition;
+  var connectivity;
+  StreamSubscription<ConnectivityResult> subscription;
 
   @override
   void initState() {
     super.initState();
+    connectivity = new Connectivity();
+    subscription =
+        connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result.index != 2) {
+        setState(() {
+          connectionStatus = true;
+        });
+      } else {
+        setState(() {
+          connectionStatus = false;
+        });
+      }
+      didUpdateWidget(SecondPage());
+    });
     futureSynonym = fetchSynonym(widget.word);
     futureDefinition = fetchDefinition(widget.word);
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -142,13 +163,12 @@ class _SecondPageState extends State<SecondPage> {
                                             snapshot.data.definition[0]
                                                 ['partOfSpeech'],
                                             style: TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                fontSize: 20,
+                                                fontSize: 15,
                                                 color: Colors.grey[400])),
                                         Text(
                                             snapshot.data.definition[0]
                                                 ['definition'],
-                                            style: TextStyle(fontSize: 25))
+                                            style: TextStyle(fontSize: 20))
                                       ]));
                             } else {
                               return Center(
@@ -230,23 +250,9 @@ class _SecondPageState extends State<SecondPage> {
                 ))
               ])
             : Container(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                          child: IconButton(
-                              iconSize: 30,
-                              highlightColor: Color(0x00000000),
-                              splashColor: Color(0x00000000),
-                              color: Colors.grey[400],
-                              icon: Icon(Icons.refresh),
-                              onPressed: () {
-                                didUpdateWidget(SecondPage());
-                              })),
-                      Text("No internet connection",
-                          style: TextStyle(color: Colors.grey[400]))
-                    ])));
+                child: Center(
+                    child: Text("No internet connection",
+                        style: TextStyle(color: Colors.grey[400])))));
   }
 }
 
