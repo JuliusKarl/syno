@@ -1,4 +1,4 @@
-package com.example.syno
+package com.syno
 
 import io.flutter.embedding.android.FlutterActivity
 
