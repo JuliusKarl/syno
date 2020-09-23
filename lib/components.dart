@@ -56,20 +56,30 @@ class _MainButtonState extends State<MainButton> {
                       shape: CircleBorder(),
                       elevation: 2.0,
                       child: Container(
-                          foregroundDecoration: _isListening
-                              ? BoxDecoration(
+                          foregroundDecoration: connectionStatus
+                              ? _isListening
+                                  ? BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey[400],
+                                      backgroundBlendMode: BlendMode.hardLight,
+                                    )
+                                  : null
+                              : BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.grey[400],
-                                  backgroundBlendMode: BlendMode.hardLight,
-                                )
-                              : null,
+                                  color: Colors.white70,
+                                  backgroundBlendMode: BlendMode.screen,
+                                ),
                           child: button),
-                      onPressed: _listen)))),
+                      onPressed: connectionStatus ? _listen : () {})))),
       Container(
           margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
           child: Text(
-            _isListening ? "Listening ..." : "Tap to start",
-          ))
+              connectionStatus
+                  ? _isListening ? "Listening ..." : "Tap to start"
+                  : "No internet connection",
+              style: connectionStatus
+                  ? TextStyle(color: grey)
+                  : TextStyle(color: Colors.grey[400])))
     ]);
   }
 

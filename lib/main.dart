@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'components.dart';
+import 'package:connectivity/connectivity.dart';
+
+bool connectionStatus = true;
 
 void main() => runApp(
     MaterialApp(theme: ThemeData(fontFamily: 'Questrial'), home: Home()));
@@ -13,13 +18,34 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Image logo;
+  var connectivity;
+  StreamSubscription<ConnectivityResult> subscription;
 
   @override
   void initState() {
     super.initState();
     getRecentWords();
+    connectivity = new Connectivity();
+    subscription =
+        connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result.index != 2) {
+        setState(() {
+          connectionStatus = true;
+        });
+      } else {
+        setState(() {
+          connectionStatus = false;
+        });
+      }
+    });
     logo = Image.asset('assets/img/Syno-AppBar.png',
         height: 150, fit: BoxFit.fitHeight);
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -69,6 +95,15 @@ class _SecondPageState extends State<SecondPage> {
   }
 
   @override
+  void didUpdateWidget(SecondPage oldWidget) {
+    setState(() {
+      futureSynonym = fetchSynonym(widget.word);
+      futureDefinition = fetchDefinition(widget.word);
+    });
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -88,137 +123,170 @@ class _SecondPageState extends State<SecondPage> {
             ],
             title: Text(widget.word,
                 style: TextStyle(color: grey, fontWeight: FontWeight.bold))),
-        body: Column(children: [
-          Container(
-              padding: EdgeInsets.all(20),
-              child: FutureBuilder<Definition>(
-                  future: futureDefinition,
+        body: connectionStatus
+            ? Column(children: [
+                Container(
+                    padding: EdgeInsets.all(20),
+                    child: FutureBuilder<Definition>(
+                        future: futureDefinition,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            if (!snapshot.data.definition.isEmpty) {
+                              return Container(
+                                  alignment: Alignment(-1.0, -1.0),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            snapshot.data.definition[0]
+                                                ['partOfSpeech'],
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 20,
+                                                color: Colors.grey[400])),
+                                        Text(
+                                            snapshot.data.definition[0]
+                                                ['definition'],
+                                            style: TextStyle(fontSize: 25))
+                                      ]));
+                            } else {
+                              return Center(
+                                  child: Text(
+                                "No definition",
+                                style: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey[400]),
+                              ));
+                            }
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          return Text("");
+                        })),
+                Expanded(
+                    child: FutureBuilder<Synonyms>(
+                  future: futureSynonym,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      if (!snapshot.data.definition.isEmpty) {
-                        return Container(
-                            alignment: Alignment(-1.0, -1.0),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      snapshot.data.definition[0]
-                                          ['partOfSpeech'],
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic,
-                                          fontSize: 20,
-                                          color: Colors.grey[400])),
-                                  Text(
-                                      snapshot.data.definition[0]['definition'],
-                                      style: TextStyle(fontSize: 25))
-                                ]));
+                      if (snapshot.data.synonym != null) {
+                        if (snapshot.data.synonym.length == 0) {
+                          return Container(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
+                              child: Text(
+                                "No synonyms",
+                                style: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey[400]),
+                              ));
+                        } else {
+                          return ListView.separated(
+                              itemCount: snapshot.data.synonym.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return Divider(
+                                  height: 10,
+                                  indent: 15,
+                                  endIndent: 15,
+                                );
+                              },
+                              itemBuilder: (BuildContext ctxt, int index) {
+                                return ListTile(
+                                    trailing: Icon(Icons.arrow_forward_ios,
+                                        size: 10, color: grey),
+                                    title: Text(snapshot.data.synonym[index]),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => SecondPage(
+                                                  word: snapshot
+                                                      .data.synonym[index]
+                                                      .toString())));
+                                    });
+                              });
+                        }
                       } else {
                         return Center(
-                            child: Text(
-                          "No definition",
-                          style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey[400]),
-                        ));
+                            child: Container(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
+                                child: Text(
+                                  '"${widget.word}" not found',
+                                  style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.grey[400]),
+                                )));
                       }
                     } else if (snapshot.hasError) {
                       return Text("${snapshot.error}");
                     }
-                    return Text("");
-                  })),
-          Expanded(
-              child: FutureBuilder<Synonyms>(
-            future: futureSynonym,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data.synonym != null) {
-                  if (snapshot.data.synonym.length == 0) {
-                    return Container(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
-                        child: Text(
-                          "No synonyms",
-                          style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey[400]),
-                        ));
-                  } else {
-                    return ListView.separated(
-                        itemCount: snapshot.data.synonym.length,
-                        separatorBuilder: (BuildContext context, int index) {
-                          return Divider(
-                            height: 10,
-                            indent: 15,
-                            endIndent: 15,
-                          );
-                        },
-                        itemBuilder: (BuildContext ctxt, int index) {
-                          return ListTile(
-                              trailing: Icon(Icons.arrow_forward_ios,
-                                  size: 10, color: grey),
-                              title: Text(snapshot.data.synonym[index]),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SecondPage(
-                                            word: snapshot.data.synonym[index]
-                                                .toString())));
-                              });
-                        });
-                  }
-                } else {
-                  return Center(
-                      child: Container(
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
-                          child: Text(
-                            '"${widget.word}" not found',
-                            style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.grey[400]),
-                          )));
-                }
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-              return Center(
-                  child: Container(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
-                      child: CircularProgressIndicator(
-                          valueColor: new AlwaysStoppedAnimation<Color>(
-                              Colors.grey[200]))));
-            },
-          ))
-        ]));
+                    return Center(
+                        child: Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 50.0),
+                            child: CircularProgressIndicator(
+                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                    Colors.grey[200]))));
+                  },
+                ))
+              ])
+            : Container(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                          child: IconButton(
+                              iconSize: 30,
+                              highlightColor: Color(0x00000000),
+                              splashColor: Color(0x00000000),
+                              color: Colors.grey[400],
+                              icon: Icon(Icons.refresh),
+                              onPressed: () {
+                                didUpdateWidget(SecondPage());
+                              })),
+                      Text("No internet connection",
+                          style: TextStyle(color: Colors.grey[400]))
+                    ])));
   }
 }
 
 // HTTP Fetch Synonym
 Future<Synonyms> fetchSynonym(word) async {
   final worduri = word.replaceAll(new RegExp(r'(?!\-)[^\w\s]+'), '');
-  print(worduri);
-  final response = await http.get(
-      'https://wordsapiv1.p.rapidapi.com/words/$worduri/synonyms',
-      headers: {
-        'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
-        'x-rapidapi-key': 'cf27a39d17msh2f698d0bc5123d6p13a834jsnb4c356ae1541'
-      });
-  return Synonyms.fromJson(json.decode(response.body));
+  try {
+    final response = await http.get(
+        'https://wordsapiv1.p.rapidapi.com/words/$worduri/synonyms',
+        headers: {
+          'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+          'x-rapidapi-key': 'cf27a39d17msh2f698d0bc5123d6p13a834jsnb4c356ae1541'
+        });
+    if (response.statusCode == 200) {
+      return Synonyms.fromJson(json.decode(response.body));
+    }
+  } on Exception {
+    return null;
+  }
+  return null;
 }
 
 // HTTP Fetch Definition
 Future<Definition> fetchDefinition(word) async {
   final worduri = word.replaceAll(new RegExp(r'(?!\-)[^\w\s]+'), '');
-  final response = await http.get(
-      'https://wordsapiv1.p.rapidapi.com/words/$worduri/definitions',
-      headers: {
-        'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
-        'x-rapidapi-key': 'cf27a39d17msh2f698d0bc5123d6p13a834jsnb4c356ae1541'
-      });
-  if (response.statusCode != 200) {
+  try {
+    final response = await http.get(
+        'https://wordsapiv1.p.rapidapi.com/words/$worduri/definitions',
+        headers: {
+          'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+          'x-rapidapi-key': 'cf27a39d17msh2f698d0bc5123d6p13a834jsnb4c356ae1541'
+        });
+
+    if (response.statusCode == 200) {
+      return Definition.fromJson(json.decode(response.body));
+    }
+  } on Exception {
     return null;
-  } else {
-    return Definition.fromJson(json.decode(response.body));
   }
+  return null;
 }
 
 class Synonyms {
