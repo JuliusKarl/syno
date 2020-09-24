@@ -23,13 +23,19 @@
 	
 	/* Navbar Scripts */
 	// jQuery to collapse the navbar on scroll
-    $(window).on('scroll load', function() {
-		if ($(".navbar").offset().top > 20) {
-			$(".fixed-top").addClass("top-nav-collapse");
-		} else {
-			$(".fixed-top").removeClass("top-nav-collapse");
-		}
-    });
+     // Navbar hide
+     var prevScrollpos = window.pageYOffset;
+     window.onscroll = function() {
+         var currentScrollPos = window.pageYOffset;
+ 
+         if (prevScrollpos > currentScrollPos || prevScrollpos <= 0) {
+             document.getElementById("navbar").style.top = "0";
+             document.getElementById("navbar").style.background = "rgba(26, 26, 26, 0.9)";
+             if (currentScrollPos <= 100) document.getElementById("navbar").style.background = "rgba(26, 26, 26, 0.0)";
+         }
+         else {document.getElementById("navbar").style.top = "-100px";}
+         prevScrollpos = currentScrollPos;
+     }
 
 	// jQuery for page scrolling feature - requires jQuery Easing plugin
 	$(function() {

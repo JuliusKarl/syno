@@ -55,17 +55,18 @@ body, p {
 
 .p-large {
 	color: #f1f1f8;
-	font: 400 1rem/1.5rem "Open Sans", sans-serif;
+	font: 400 1rem/1.5rem "Questrial", sans-serif;
 }
 
 .p-small {
 	color: #f1f1f8;
-	font: 400 0.75rem/1.25rem "Open Sans", sans-serif;
+	font: 400 0.75rem/1.25rem "Questrial", sans-serif;
 }
 
 .p-heading {
 	margin-bottom: 3.75rem;
 	text-align: center;
+	font-family: 'Questrial', sans-serif;
 }
 
 .li-space-lg li {
@@ -635,7 +636,9 @@ input[type='checkbox'] {
 	background-color:  #242424;
 	box-shadow: 0 0.0625rem 0.375rem 0 rgba(0, 0, 0, 0.1);
 	font: 700 0.75rem/2rem "Questrial", sans-serif;
-	transition: all 0.2s ease;
+	height: 5rem;
+	transition: all 0.5s ease;
+	box-shadow: none;
 }
 
 .navbar-custom .navbar-brand.logo-image img {
@@ -755,6 +758,7 @@ input[type='checkbox'] {
 .header {
 	background-color: transparent;
 	background-size: cover;
+	font-family: 'Questrial', 'sans-serif;
 }
 
 .header .header-content {
@@ -802,6 +806,7 @@ input[type='checkbox'] {
 
 .tabs .p-heading {
 	margin-bottom: 3.125rem;
+	font-family: 'Questrial', 'sans-serif;
 }
 
 .tabs .nav-tabs {
@@ -951,6 +956,7 @@ input[type='checkbox'] {
 .basic-1 .p-heading {
 	margin-bottom: 4rem;
 	text-align: center;
+	font-family: 'Questrial', 'sans-serif;
 }
 
 .basic-1 .image-container img {
@@ -1225,6 +1231,7 @@ input[type='checkbox'] {
 
 .basic-4 .p-large {
 	margin-bottom: 1.75rem;
+	font-family: 'Questrial', 'sans-serif;
 }
 
 .basic-4 .btn-solid-lg {
@@ -1367,6 +1374,7 @@ input[type='checkbox'] {
 .copyright .p-small {
 	color: #f1f1f8;
 	opacity: 0.6;
+	font-family: 'Questrial', 'sans-serif;
 }
 
 
@@ -1478,6 +1486,7 @@ a:hover.back-to-top {
 		width: 85%;
 		margin-right: auto;
 		margin-left: auto;
+		font-family: 'Questrial', 'sans-serif;
 	}
 
 	h1 {
@@ -1690,6 +1699,7 @@ a:hover.back-to-top {
 	/* General Styles */
 	.p-heading {
 		width: 65%;
+		font-family: 'Questrial', 'sans-serif;
 	}
 	/* end of general styles */
 
@@ -1867,6 +1877,7 @@ a:hover.back-to-top {
 	/* General Styles */
 	.p-heading {
 		width: 44%;
+		font-family: 'Questrial', 'sans-serif;
 	}
 	/* end of general styles */
 
