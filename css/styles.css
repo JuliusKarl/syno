@@ -892,7 +892,6 @@ input[type='checkbox'] {
 .basic-1 {
 	padding-top: 6.375rem;
 	padding-bottom: 6.875rem;
-	background: url('../images/video-background.jpg') center center no-repeat;
 	background-size: cover; 
 }
 
@@ -904,7 +903,7 @@ input[type='checkbox'] {
 .basic-1 .p-heading {
 	margin-bottom: 4rem;
 	text-align: center;
-	font-family: 'Questrial', 'sans-serif;
+	font-family: 'Questrial', 'sans-serif';
 }
 
 .basic-1 .image-container img {
@@ -942,7 +941,7 @@ input[type='checkbox'] {
 	width: 4.75rem;
 	height: 4.75rem;
 	border-radius: 50%;
-	background: #4eaaff;
+	background: #bbbbbb;
 	animation: pulse-border 1500ms ease-out infinite;
 	-webkit-transform: translateX(-50%) translateY(-50%);
 	-ms-transform: translateX(-50%) translateY(-50%);
@@ -959,7 +958,7 @@ input[type='checkbox'] {
 	width: 4.375rem;
 	height: 4.375rem;
 	border-radius: 50%;
-	background: #4eaaff;
+	background: rgba(26, 26, 26, 0.5);
 	transition: all 200ms;
 	-webkit-transform: translateX(-50%) translateY(-50%);
 	-ms-transform: translateX(-50%) translateY(-50%);
