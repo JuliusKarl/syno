@@ -740,7 +740,6 @@ input[type='checkbox'] {
 /*     05. Features     */
 /************************/
 #features {
-	padding-top: 6.5rem;
 }
 .tabs {
 	padding-bottom: 4.25rem;
@@ -890,7 +889,7 @@ input[type='checkbox'] {
 /*     06. Video     */
 /*********************/
 .basic-1 {
-	padding-top: 6.375rem;
+	padding-top: 3rem;
 	padding-bottom: 6.875rem;
 	background-size: cover; 
 }
@@ -991,135 +990,12 @@ input[type='checkbox'] {
 /* end of video play button */  
 
 
-/*************************/
-/*     07. Details 1     */
-/*************************/
-.basic-2 {
-	padding-top: 8rem;
-	padding-bottom: 3.5rem;
-	background-color: #262431;
-}
-
-.basic-2 img {
-	margin-bottom: 3.5rem;
-}
-
-.basic-2 h3 {
-	margin-bottom: 1.125rem;
-}
-
-.basic-2 .btn-solid-reg {
-	margin-top: 0.5rem;
-}
-
-
-/*************************/
-/*     08. Details 2     */
-/*************************/
-.basic-3 {
-	padding-top: 3.5rem;
-	padding-bottom: 7.25rem;
-	background-color: #262431;
-}
-
-.basic-3 .text-container {
-	margin-bottom: 3.5rem;
-}
-
-.basic-3 h3 {
-	margin-bottom: 1.125rem;
-}
-
-.basic-3 .btn-solid-reg {
-	margin-top: 0.5rem;
-}
-
-
-/**********************************/
-/*     09. Details Lightboxes     */
-/**********************************/
-.lightbox-basic {
-	position: relative;
-	max-width: 46.875rem;
-	margin: 2.5rem auto;
-	padding: 3rem 1rem;
-	border-radius: 0.25rem;
-	background-color: #2f2c3d;
-	text-align: left;
-}
-
-.lightbox-basic img {
-	display: block;
-	margin-right: auto;
-	margin-bottom: 3rem;
-	margin-left: auto;
-}
-
-.lightbox-basic h3 {
-	margin-bottom: 0.625rem;
-}
-
-.lightbox-basic hr {
-	width: 3.75rem;
-	height: 0.125rem;
-	margin-top: 0.125rem;
-	margin-bottom: 1.125rem;
-	margin-left: 0;
-	border: 0;
-	background-color: #e39768;
-	text-align: left;
-}
-
-.lightbox-basic h4 {
-	margin-top: 1.75rem;
-	margin-bottom: 0.75rem;
-}
-
-.lightbox-basic table {
-	margin-top: 1rem;
-	margin-bottom: 1.5rem;
-}
-
-.lightbox-basic table tr {
-	line-height: 1.75em;
-}
-
-.lightbox-basic table .icon-cell {
-	width: 2rem;
-	padding-right: 0.25rem;
-	color: #e39768;
-	text-align: center;
-}
-
-.lightbox-basic a.mfp-close.as-button {
-	position: relative;
-	width: auto;
-	height: auto;
-	margin-left: 0.375rem;
-	color: #e39768;
-	opacity: 1;
-}
-
-.lightbox-basic a.mfp-close.as-button:hover {
-	color: #f1f1f8;
-}
-
-.lightbox-basic button.mfp-close.x-button {
-	position: absolute;
-	top: -0.375rem;
-	right: -0.375rem;
-	width: 2.75rem;
-	height: 2.75rem;
-	color: #f1f1f8;
-}
-
-
 /***************************/
 /*     10. Screenshots     */
 /***************************/
 .slider-2 {
 	padding-bottom: 6.875rem;
-	
+	padding-top: 3rem;
 }
 
 .slider-2 .slider-container {
@@ -1337,13 +1213,13 @@ a.back-to-top {
 	width: 2.625rem;
 	height: 2.625rem;
 	border-radius: 1.875rem;
-	background: #e39768 url("../images/up-arrow.png") no-repeat center 47%;
+	background: transparent url("../images/up-arrow.png") no-repeat center 47%;
 	background-size: 1.125rem 1.125rem;
 	text-indent: -9999px;
 }
 
 a:hover.back-to-top {
-	background-color: #36edfd; 
+	background-color: rgba(26, 26, 26, 0.5); 
 }
 
 
@@ -1656,7 +1532,7 @@ a:hover.back-to-top {
 
 	/* Header */
 	.header .header-content {
-		padding-top: 13rem;
+		padding-top: 5rem;
 		padding-bottom: 10rem;
 		text-align: left;
 	}
