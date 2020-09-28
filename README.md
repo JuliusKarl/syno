@@ -2,6 +2,7 @@
 <img src="images/Untitled-1.jpg" width="600">
 </p>
 
+<a href='https://play.google.com/store/apps/details?id=com.syno'>Download from Google Play<a>
 
 Syno is a speech transcriber implementing Flutter's native 'Speech-To-Text API' to collect user input (via device microphone) and generating accurate synonyms built with Flutter and Dart.
 
